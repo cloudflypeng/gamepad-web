@@ -1,10 +1,26 @@
 {
+  "version": "0.0.1",
+  "name": "gamepad-web",
+  "main": "dist/gamepad-web.js",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cloudflypeng/gamepad-web"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://github.com/cloudflypeng/gamepad-webo#readme",
   "scripts": {
-    "watch": "node rollup.config.js"
-   },
-	"dependencies": {
-		"@rollup/plugin-commonjs": "^25.0.7",
-		"@rollup/plugin-node-resolve": "^15.2.3",
-		"rollup": "^4.12.1"
-	}
+    "dev": "rollup -c -w",
+    "build": "rollup -c",
+    "prepublish": "npm run build",
+    "publish": "npm publish"
+  },
+  "dependencies": {
+    "rollup": "^4.12.1"
+  }
 }

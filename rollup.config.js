@@ -1,28 +1,14 @@
-const rollup = require('rollup');
-const resolve = require('@rollup/plugin-node-resolve');
-const commonjs = require('@rollup/plugin-commonjs');
+import { defineConfig } from 'rollup';
 
-const watchOptions = {
+export default defineConfig({
   input: 'src/index.js',
   output: {
-    file: 'dist/bundle.js',
+    file: 'dist/gamepad-web.js',
     format: 'es', // 修改这里
   },
-  plugins: [resolve(), commonjs()],
+  plugins: [],
   watch: {
     include: 'src/**',
     exclude: 'node_modules/**',
   },
-};
-
-const watcher = rollup.watch(watchOptions);
-
-watcher.on('event', (event) => {
-  if (event.code === 'START') {
-    console.log('Rebuilding...');
-  } else if (event.code === 'END') {
-    console.log('Rebuild completed.');
-  } else if (event.code === 'ERROR') {
-    console.error('Error during rebuild:', event.error);
-  }
 });
