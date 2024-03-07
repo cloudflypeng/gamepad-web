@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My First React App</title>
+
+  </head>
+  <body>
+    <div id="root">
+      <a-button id="check">
+        检测
+      </a-button>
+    </div>
+    <script src="../dist/gamepad-web.js"></script>
+    <script type="module">
+      console.log('window.GPW :>> ', window.GPW);
+      window.GPW.onConnect((gamepad) => {
+        console.log('gamepad :>> ', gamepad);
+        window.GPW.addEventListener(gamepad.id, window.GPW.GAMEPAD_CODES.BUTTON_A, () => {
+          console.log('BUTTON_A :>> ', );
+        });
+        window.GPW.addEventListener(gamepad.id, window.GPW.GAMEPAD_CODES.BUTTON_B, () => {
+          console.log('BUTTON_B :>> ', 1);
+        });
+      });
+    </script>
+    <script>
+      const check = document.getElementById('check');
+      check.addEventListener('click', () => {
+        // console.log('window.GP :>> ', window.GP.getGamePad());
+        // console.log('enhancedGamePadList :>> ', window.navigator.getGamepads());
+      });
+
+    </script>
+  </body>
+</html>

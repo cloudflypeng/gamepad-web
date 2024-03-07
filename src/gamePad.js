@@ -17,28 +17,3 @@ export const GAMEPAD_CODES = {
   BUTTON_RIGHT: 15,
   BUTTON_HOME: 16,
 };
-
-class GamePad {
-  constructor(Gp) {
-    this.handlers = {};
-    this.Gp = Gp;
-  }
-
-  getGamePad() {
-    return this.Gp;
-  }
-
-  getHandlerList() {
-    return this.handlers;
-  }
-
-  on(buttonCode, callback) {
-    this.handlers[GAMEPAD_CODES[buttonCode]] = callback;
-  }
-
-  remove(buttonCode) {
-    delete this.handlers[GAMEPAD_CODES[buttonCode]];
-  }
-}
-
-export default GamePad;

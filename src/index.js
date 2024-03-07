@@ -1,40 +1,55 @@
-import { checkGamePadSupport } from './utils';
-import GamePad, { GAMEPAD_CODES } from './gamePad';
-import { startLoop, cancelLoop } from './loop';
+import { GAMEPAD_CODES } from './gamePad.js';
+import { checkGamePadSupport } from './utils.js';
 
-// 扩展对象
-let enhancedGamePadList = [];
+const requestAnimationFrame =
+  window.requestAnimationFrame || window.webkitRequestAnimationFrame;
+const cancelAnimationFrame =
+  window.cancelAnimationFrame || window.webkitCancelAnimationFrame;
 
-// 返回enhance对象 给开发者用来订阅
-function getEnhanceGamePad() {
-  return enhancedGamePadList;
-}
-if (checkGamePadSupport()) {
-  window.addEventListener('gamepadconnected', function (e) {
-    enhancedGamePadList.push({
-      original: e.gamepad,
-      id: e.gamepad.id,
-      trigger: new GamePad(e.gamepad),
+class GPW {
+  constructor() {
+    this.supportGamePad = checkGamePadSupport();
+    this.handlers = {};
+    this.gpwIdList = [];
+    this.loop;
+    this.GAMEPAD_CODES = GAMEPAD_CODES;
+  }
+  onConnect(callback) {
+    if (!this.supportGamePad) {
+      console.log('GamePad Api is not supported');
+      return;
+    }
+    window.addEventListener('gamepadconnected', (e) => {
+      this.handlers[e.gamepad.id] = {};
+      this.gpwIdList.push(e.gamepad.id);
+      console.log('gamepadconnected :>> ', e.gamepad.id);
+      callback(e.gamepad);
+      this.startLoop();
     });
-    startLoop(
-      e.gamepad.id,
-      enhancedGamePadList[enhancedGamePadList.length - 1].trigger
-    );
-  });
-  // 取消连接是删除
-  window.addEventListener('gamepaddisconnected', function (e) {
-    cancelLoop(e.gamepad.id);
-    enhancedGamePadList = enhancedGamePadList.filter((item) => {
-      return item.id !== e.gamepad.id;
+    window.addEventListener('gamepaddisconnected', (e) => {
+      delete this.handlers[e.gamepad.id];
+      this.gpwIdList = this.gpwIdList.filter((i) => i !== e.gamepad.id);
     });
-  });
-} else {
-  console.logError('当前浏览器不支持GamePad Api');
-  alert('当前浏览器不支持GamePad Api');
+  }
+  addEventListener(gpwId, key, callback) {
+    this.handlers[gpwId][key] = callback;
+  }
+  startLoop() {
+    this.loop = requestAnimationFrame(() => {
+      this.gpwIdList.forEach((gpwId) => {
+        const gamePad = navigator.getGamepads().find((i) => i.id === gpwId);
+        gamePad.buttons.forEach((button, index) => {
+          if (button.pressed) {
+            this.handlers[gpwId]?.[index]?.();
+          }
+        });
+      });
+      this.startLoop();
+    });
+  }
+  cancelLoop() {
+    cancelAnimationFrame(this.loop);
+  }
 }
 
-// 返回enhance对象 给开发者用来订阅
-// 重命名为getGamePad
-const getGamePad = getEnhanceGamePad;
-
-export { GAMEPAD_CODES, getGamePad };
+window.GPW = new GPW();
